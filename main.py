@@ -8,6 +8,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 import re
+from time import sleep
 
 import os
 import zipfile
@@ -17,10 +18,42 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 import re
-# -----------------------------------------------Set up Proxies --------------------------------------
+import threading
+
+# --------------------------Global Variables-----------------
+PROXY_LIST = [
+    {
+        'PROXY_HOST': '186.65.117.169',
+        'PROXY_PORT': '9582',
+        'PROXY_USER': '2c91Ug',
+        'PROXY_PASS': '6MEc6s'
+
+    },
+
+
+
+    {
+        'PROXY_HOST': '46.232.14.210',
+        'PROXY_PORT': '8000',
+        'PROXY_USER': 'jHmVb5',
+        'PROXY_PASS': 'VaDjAG'
+
+    },
+    {
+        'PROXY_HOST': '46.232.15.30',
+        'PROXY_PORT': '8000',
+        'PROXY_USER': 'jHmVb5',
+        'PROXY_PASS': 'VaDjAG'
+
+    },
+
+
+
+]
 sites = []
 niches = []
-# configure proxy
+
+# -----------------------------------------------Set up Proxies --------------------------------------
 
 
 def configure_webdriver(PROXY_HOST, PROXY_PORT, PROXY_USER, PROXY_PASS):
@@ -148,9 +181,11 @@ def scrap(driver):
         pass
 
 
-def Main_SCRAPPER(driver, list_of_proxies):
+def Main_SCRAPP(PROXY_LIST):
     i = 0
-
+    proxy = PROXY_LIST[i]
+    driver = get_chromedriver(use_proxy=True, PROXY_HOST=proxy['PROXY_HOST'],
+                              PROXY_PORT=proxy['PROXY_PORT'], PROXY_USER=proxy['PROXY_USER'], PROXY_PASS=proxy['PROXY_PASS'])
     try:
         for site in sites:
             my_file = open("emails.txt", "a+", encoding='utf-8')
@@ -177,7 +212,7 @@ def Main_SCRAPPER(driver, list_of_proxies):
                         break
                 i += 1
                 driver.quit()
-                proxy = list_of_proxies[i]
+                proxy = PROXY_LIST[i]
 
                 driver = get_chromedriver(use_proxy=True, PROXY_HOST=proxy['PROXY_HOST'],
                                           PROXY_PORT=proxy['PROXY_PORT'], PROXY_USER=proxy['PROXY_USER'], PROXY_PASS=proxy['PROXY_PASS'])
@@ -187,57 +222,10 @@ def Main_SCRAPPER(driver, list_of_proxies):
 
 
 def main():
-    if site.get() != '':
-        sites.append(site.get())
-    if niche.get() != '':
-        niches.append(niche.get())
-
-    if len(sites) == 0 or len(niches) == 0:
-        print("Eror")
-        return
-
-    List_of_Proxies = [
-        {
-            'PROXY_HOST': '186.65.117.169',
-            'PROXY_PORT': '9582',
-            'PROXY_USER': '2c91Ug',
-            'PROXY_PASS': '6MEc6s'
-
-        },
-
-
-
-        {
-            'PROXY_HOST': '46.232.14.210',
-            'PROXY_PORT': '8000',
-            'PROXY_USER': 'jHmVb5',
-            'PROXY_PASS': 'VaDjAG'
-
-        },
-        {
-            'PROXY_HOST': '46.232.15.30',
-            'PROXY_PORT': '8000',
-            'PROXY_USER': 'jHmVb5',
-            'PROXY_PASS': 'VaDjAG'
-
-        },
-
-
-
-    ]
-    proxy = List_of_Proxies[0]
-    driver = get_chromedriver(use_proxy=True, PROXY_HOST=proxy['PROXY_HOST'],
-                              PROXY_PORT=proxy['PROXY_PORT'], PROXY_USER=proxy['PROXY_USER'], PROXY_PASS=proxy['PROXY_PASS'])
-    Main_SCRAPPER(driver, List_of_Proxies)
-
-
-PROXY_LIST = ['iu']
-sites = []
-niches = []
-
-
-def printe():
-    print(PROXY_LIST)
+    get_data()
+    print("********here*******")
+    sleep(3)
+    threading.Thread(target=Main_SCRAPP(PROXY_LIST)).start()
 
 
 def get_data():
@@ -255,22 +243,30 @@ def get_data():
 
     proxies = proxies_entry.get("1.0", "end")
     for proxy in proxies.splitlines():
-        configs = proxy.split(':')
-        Proxy_config['PROXY_HOST'] = configs[0]
-        Proxy_config['PROXY_PORT'] = configs[1]
-        Proxy_config['PROXY_USER'] = configs[2]
-        Proxy_config['PROXY_PASS'] = configs[3]
-        PROXY_LIST.append(Proxy_config)
+        if(proxy == ''):
+            pass
+        else:
+            configs = proxy.split(':')
+            Proxy_config['PROXY_HOST'] = configs[0]
+            Proxy_config['PROXY_PORT'] = configs[1]
+            Proxy_config['PROXY_USER'] = configs[2]
+            Proxy_config['PROXY_PASS'] = configs[3]
+            PROXY_LIST.append(Proxy_config)
 
-    print(PROXY_LIST)
+
+def output_mails(emails):
+    Emails_output.insert(1.0, PROXY_LIST)
+
+
+def printe():
+    print("wtf")
 
 
 # Container  of all franmes == root window
 Global_View = Tk()
-Global_View.geometry("720x1000")
+Global_View.state("zoomed")
 Global_View.config(bg="#054861")
 
-Container = Frame(Global_View)
 
 # frames inside
 
@@ -279,6 +275,10 @@ Right_frame = Frame(Global_View)
 
 Right_frame.config(bg="blue", width=900)
 Right_frame.pack(fill=tk.BOTH, side=RIGHT)
+
+Emails_output = Text(Right_frame, height=50)
+Emails_output.place(x=10, y=30)
+
 # set frame to the left
 
 Left_frame.config(bg="green", width=900)
@@ -314,10 +314,9 @@ proxies_entry = Text(Left_frame, height=10)
 proxies_entry.place(x=25, y=530)
 
 
-btn = Button(Left_frame, text="Connect", command=get_data)
+btn = Button(Left_frame, text="Connect",
+             command=main)
 
-btn.place(x=250, y=800)
-btn1 = Button(Left_frame, text="Connect", command=printe)
+btn.place(x=250, y=800,)
 
-btn1.place(x=250, y=900)
 Global_View.mainloop()
