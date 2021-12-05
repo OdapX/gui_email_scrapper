@@ -1,17 +1,6 @@
 from tkinter import *
 import tkinter as tk
 from Emails_Bot import Bot
-import threading
-# //TODO: MAke chrome stuff into a class and make the classs threaded
-# --------------------------Global Variables-----------------
-
-
-# -----------------------------------------------Set up Proxies --------------------------------------
-
-
-def main():
-    get_data()
-    print("********here*******")
 
 
 def get_data():
@@ -38,10 +27,6 @@ def get_data():
             Proxy_config['PROXY_USER'] = configs[2]
             Proxy_config['PROXY_PASS'] = configs[3]
             PROXY_LIST.append(Proxy_config)
-
-
-def output_mails(emails):
-    Emails_output.insert(1.0, PROXY_LIST)
 
 
 def go():
@@ -74,18 +59,18 @@ def go():
 
 
     ]
-
-    sites = ['instagram.com']
-    niches = ['dogs']
-
-    GRATOR = Bot(PROXY_LIST, sites, niches)
-
-    GRATOR.Main_SCRAPP()
+    websites = ['instagram.com']
+    niches = ['dogs', 'cats', 'boooty']
+    bit = Bot(PROXY_LIST, websites, niches)
+    bit.All_Scrapper()
 
 
 # Container  of all franmes == root window
 Global_View = Tk()
-Global_View.state("zoomed")
+width = 750
+height = 750
+Global_View.geometry(f"{width}x{height}")
+# Global_View.state("zoomed")
 Global_View.config(bg="#054861")
 
 
@@ -94,7 +79,7 @@ Global_View.config(bg="#054861")
 Left_frame = Frame(Global_View)
 Right_frame = Frame(Global_View)
 
-Right_frame.config(bg="blue", width=900)
+Right_frame.config(bg="blue", width=width/2)
 Right_frame.pack(fill=tk.BOTH, side=RIGHT)
 
 Emails_output = Text(Right_frame, height=50)
@@ -102,7 +87,7 @@ Emails_output.place(x=10, y=30)
 
 # set frame to the left
 
-Left_frame.config(bg="green", width=900)
+Left_frame.config(bg="green", width=width/2)
 Left_frame.pack(fill=tk.BOTH, side=LEFT)
 # left frame components
 site_title = Label(Left_frame, text="WEBSITES AREA")
@@ -136,7 +121,7 @@ proxies_entry.place(x=25, y=530)
 
 
 btn = Button(Left_frame, text="Connect",
-             command=threading.Thread(target=go).start())
+             command=go)
 
 btn.place(x=250, y=800,)
 
