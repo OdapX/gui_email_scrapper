@@ -6,16 +6,26 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 import re
-from time import sleep
 
 
 class Bot:
+    # will be used to disable launching another request on a running instance
+    # -make sue clicking start button many times doesn't break the code
+
+    Finished_Scrapping = False
+
+    # wil be used to stop scrapping on stop-botton clicked
 
     Exit = False
+    # Initiate the data needed for scrapping
     Websites = []
     Niches = []
-   # keep cout of the proxy used
+   # keep count of the proxy used
     Counter = 0
+
+    # current niche will be used to let the user know what niche is the program at.
+
+    Current_Niche = ''
 
     Driver = None
     # driver configs
@@ -116,46 +126,63 @@ class Bot:
    # Launch_Browser to be only used after the Driver is setup
    # using the Setup_Driver function.
     def Scrap_one_Niche(self, query):
-        try:
-            self.Driver.get("https://www.google.com/")
 
-            input = self.Driver.find_element(
-                By.XPATH, '/ html/body/div[1]/div[3]/form/div[1]/div[1]/div[1]/div/div[2]/input')
-            input.send_keys(query)
-
-            self.Driver.find_element(
-                By.XPATH, '/html/body/div[1]/div[3]/form/div[1]/div[1]/div[3]/center/input[1]').click()
-
-        except:
-            print(f"error occurred {query}")
-
-        while(True):
+        if self.Exit:
             try:
-                data = self.Driver.find_element(
-                    By.XPATH, '//*[@id="rso"]')
+                self.Driver.quit()
+                return
+            except:
+                return
+        else:
 
-                line = str(data.text)
-                matches = re.findall(r'[\w.+-]+@[\w-]+\.[\w.-]+', line)
-                unique_emails = set()
-                my_file = open("emails.txt", "a+", encoding='utf-8')
+            try:
+                self.Driver.get("https://www.google.com/")
 
-                for match in matches:
-                    if match[-1] == '.':
-                        match = match[0: -1]
-                    unique_emails.add(match)
-
-                for email in unique_emails:
-                    my_file.write(email + '\n')
-                my_file.close()
-
-                self.Driver.execute_script(
-                    "window.scrollTo(0, document.body.scrollHeight);")
-                sleep(1)
+                input = self.Driver.find_element(
+                    By.XPATH, '/ html/body/div[1]/div[3]/form/div[1]/div[1]/div[1]/div/div[2]/input')
+                input.send_keys(query)
 
                 self.Driver.find_element(
-                    By.ID, "pnnext").click()
+                    By.XPATH, '/html/body/div[1]/div[3]/form/div[1]/div[1]/div[3]/center/input[1]').click()
+
             except:
-                break
+                print(f"error occurred {query}")
+
+            while(True):
+                if self.Exit:
+                    try:
+                        self.Driver.quit()
+                        return
+                    except:
+                        return
+                else:
+                    try:
+                        # TODO:write this in a database instead of a txt file
+
+                        data = self.Driver.find_element(
+                            By.XPATH, '//*[@id="rso"]')
+
+                        line = str(data.text)
+                        matches = re.findall(r'[\w.+-]+@[\w-]+\.[\w.-]+', line)
+                        unique_emails = set()
+                        my_file = open("emails.txt", "a+", encoding='utf-8')
+
+                        for match in matches:
+                            if match[-1] == '.':
+                                match = match[0: -1]
+                            unique_emails.add(match)
+
+                        for email in unique_emails:
+                            my_file.write(email + '\n')
+                        my_file.close()
+
+                        self.Driver.execute_script(
+                            "window.scrollTo(0, document.body.scrollHeight);")
+
+                        self.Driver.find_element(
+                            By.ID, "pnnext").click()
+                    except:
+                        break
 
     def All_Scrapper(self):
         if self.Exit:
@@ -179,6 +206,8 @@ class Bot:
                                 return
 
                         else:
+                            self.Current_Niche = niche
+                            print(self.Current_Niche)
                             my_file = open("emails.txt", "a+",
                                            encoding='utf-8')
                             my_file.write(
@@ -195,43 +224,43 @@ class Bot:
                                 self.Scrap_one_Niche(query)
                             except:
                                 self.Driver.quit()
-                                sleep(3)
                                 self.Setup_Driver()
                                 self.Scrap_one_Niche(query)
+                    self.Finished_Scrapping = True
 
             except:
                 pass
 
 
-PROXY_LIST = [
-    {
-        'PROXY_HOST': '186.65.117.169',
-        'PROXY_PORT': '9582',
-        'PROXY_USER': '2c91Ug',
-        'PROXY_PASS': '6MEc6s'
+# PROXY_LIST = [
+#     {
+#         'PROXY_HOST': '186.65.117.169',
+#         'PROXY_PORT': '9582',
+#         'PROXY_USER': '2c91Ug',
+#         'PROXY_PASS': '6MEc6s'
 
-    },
-
-
-    {
-        'PROXY_HOST': '46.232.14.210',
-        'PROXY_PORT': '8000',
-        'PROXY_USER': 'jHmVb5',
-        'PROXY_PASS': 'VaDjAG'
-
-    },
-    {
-        'PROXY_HOST': '46.232.15.30',
-        'PROXY_PORT': '8000',
-        'PROXY_USER': 'jHmVb5',
-        'PROXY_PASS': 'VaDjAG'
-
-    },
+#     },
 
 
-]
-websites = ['instagram.com']
-niches = ['dogs', 'cats']
-bit = Bot(PROXY_LIST, websites, niches)
-bit.Exit = True
-bit.All_Scrapper()
+#     {
+#         'PROXY_HOST': '46.232.14.210',
+#         'PROXY_PORT': '8000',
+#         'PROXY_USER': 'jHmVb5',
+#         'PROXY_PASS': 'VaDjAG'
+
+#     },
+#     {
+#         'PROXY_HOST': '46.232.15.30',
+#         'PROXY_PORT': '8000',
+#         'PROXY_USER': 'jHmVb5',
+#         'PROXY_PASS': 'VaDjAG'
+
+#     },
+
+
+# ]
+# websites = ['instagram.com']
+# niches = ['dogs', 'cats']
+# bit = Bot(PROXY_LIST, websites, niches)
+
+# bit.All_Scrapper()

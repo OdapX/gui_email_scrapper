@@ -190,7 +190,7 @@ class Ui_Dialog(object):
 
     def stop(self):
         try:
-            t.terminate()
+            bit.Exit = True
         except:
             pass
 
@@ -255,7 +255,6 @@ if __name__ == "__main__":
     websites = ['instagram.com']
     niches = ['dogs', 'cats']
     bit = Bot(PROXY_LIST, websites, niches)
-
     t = threading.Thread(target=lambda: bit.All_Scrapper())
     app = QtWidgets.QApplication(sys.argv)
     Dialog = QtWidgets.QDialog()
