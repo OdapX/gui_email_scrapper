@@ -11,6 +11,7 @@ from time import sleep
 
 class Bot:
 
+    Exit = False
     Websites = []
     Niches = []
    # keep cout of the proxy used
@@ -96,6 +97,7 @@ class Bot:
     # commit the new Driver to the instance in the end of configuration
 
     def Setup_Driver(self):
+
         path = os.path.dirname(os.path.abspath(__file__))
         chrome_options = webdriver.ChromeOptions()
         pluginfile = 'proxy_auth_plugin.zip'
@@ -156,34 +158,80 @@ class Bot:
                 break
 
     def All_Scrapper(self):
-
-        try:
-            self.Setup_Driver()
-        except:
-            print("error Launching..Aborting")
+        if self.Exit:
             return
 
-        try:
-            for website in self.Websites:
-                for niche in self.Niches:
-                    my_file = open("emails.txt", "a+", encoding='utf-8')
-                    my_file.write(
-                        f"__________ {website}   :   {niche} _____________ \n")
-                    my_file.close()
-                    query = f'site:{website} niche:"{niche}" "@gmail.com"'
+        else:
+            try:
+                self.Setup_Driver()
+            except:
+                print("error Launching..Aborting")
+                return
 
-                    # scrap one niche according to the query string
-                    # when a proxy is blocked close the driver and
-                    # launch new one with a new proxy and scrap the niche
-                    # in use again.
+            try:
+                for website in self.Websites:
+                    for niche in self.Niches:
+                        if self.Exit:
+                            try:
+                                self.Driver.quit()
+                                return
+                            except:
+                                return
 
-                    try:
-                        self.Scrap_one_Niche(query)
-                    except:
-                        self.Driver.quit()
-                        sleep(3)
-                        self.Setup_Driver()
-                        self.Scrap_one_Niche(query)
+                        else:
+                            my_file = open("emails.txt", "a+",
+                                           encoding='utf-8')
+                            my_file.write(
+                                f"__________ {website}   :   {niche} _____________ \n")
+                            my_file.close()
+                            query = f'site:{website} niche:"{niche}" "@gmail.com"'
 
-        except:
-            pass
+                            # scrap one niche according to the query string
+                            # when a proxy is blocked close the driver and
+                            # launch new one with a new proxy and scrap the niche
+                            # in use again.
+
+                            try:
+                                self.Scrap_one_Niche(query)
+                            except:
+                                self.Driver.quit()
+                                sleep(3)
+                                self.Setup_Driver()
+                                self.Scrap_one_Niche(query)
+
+            except:
+                pass
+
+
+PROXY_LIST = [
+    {
+        'PROXY_HOST': '186.65.117.169',
+        'PROXY_PORT': '9582',
+        'PROXY_USER': '2c91Ug',
+        'PROXY_PASS': '6MEc6s'
+
+    },
+
+
+    {
+        'PROXY_HOST': '46.232.14.210',
+        'PROXY_PORT': '8000',
+        'PROXY_USER': 'jHmVb5',
+        'PROXY_PASS': 'VaDjAG'
+
+    },
+    {
+        'PROXY_HOST': '46.232.15.30',
+        'PROXY_PORT': '8000',
+        'PROXY_USER': 'jHmVb5',
+        'PROXY_PASS': 'VaDjAG'
+
+    },
+
+
+]
+websites = ['instagram.com']
+niches = ['dogs', 'cats']
+bit = Bot(PROXY_LIST, websites, niches)
+bit.Exit = True
+bit.All_Scrapper()

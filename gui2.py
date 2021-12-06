@@ -10,9 +10,10 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from Emails_Bot import Bot
+import csv
 
 
-class Ui_MainWindow(object):
+class Ui_MainWindow():
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(941, 516)
@@ -39,8 +40,15 @@ class Ui_MainWindow(object):
         self.pushButton.clicked.connect(self.prin)
 
     def prin(self):
-        filename = QtGui.QFileDialog.getOpenFileName(self, 'Open File', '.')
-        print('Path file :', filename)
+
+        dir = './'
+        fname = QtWidgets.QFileDialog.getOpenFileName(None, "Select a file...",
+                                                      dir, filter="*.csv")
+
+        with open(fname[0]) as file:
+            csv_file = csv.reader(file, delimiter=',')
+            for row in csv_file:
+                print(row[0])
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate

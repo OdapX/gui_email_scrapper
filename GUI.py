@@ -30,39 +30,11 @@ def get_data():
 
 
 def go():
-    PROXY_LIST = [
-        {
-            'PROXY_HOST': '186.65.117.169',
-            'PROXY_PORT': '9582',
-            'PROXY_USER': '2c91Ug',
-            'PROXY_PASS': '6MEc6s'
 
-        },
-
-
-
-        {
-            'PROXY_HOST': '46.232.14.210',
-            'PROXY_PORT': '8000',
-            'PROXY_USER': 'jHmVb5',
-            'PROXY_PASS': 'VaDjAG'
-
-        },
-        {
-            'PROXY_HOST': '46.232.15.30',
-            'PROXY_PORT': '8000',
-            'PROXY_USER': 'jHmVb5',
-            'PROXY_PASS': 'VaDjAG'
-
-        },
-
-
-
-    ]
-    websites = ['instagram.com']
-    niches = ['dogs', 'cats', 'boooty']
-    bit = Bot(PROXY_LIST, websites, niches)
-    bit.All_Scrapper()
+    path = QtWidgets.QFileDialog.getOpenFileName(
+        'Open a file', "", "All Files (*)")
+    if path != ('', ''):
+        print("File path : " + path[0])
 
 
 # Container  of all franmes == root window
