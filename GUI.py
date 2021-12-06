@@ -69,7 +69,7 @@ def go():
 Global_View = Tk()
 width = 750
 height = 750
-Global_View.geometry(f"{width}x{height}")
+
 # Global_View.state("zoomed")
 Global_View.config(bg="#054861")
 
@@ -79,7 +79,7 @@ Global_View.config(bg="#054861")
 Left_frame = Frame(Global_View)
 Right_frame = Frame(Global_View)
 
-Right_frame.config(bg="blue", width=width/2)
+Right_frame.config(bg="blue", width=600)
 Right_frame.pack(fill=tk.BOTH, side=RIGHT)
 
 Emails_output = Text(Right_frame, height=50)
@@ -87,7 +87,7 @@ Emails_output.place(x=10, y=30)
 
 # set frame to the left
 
-Left_frame.config(bg="green", width=width/2)
+Left_frame.config(bg="green", width=600)
 Left_frame.pack(fill=tk.BOTH, side=LEFT)
 # left frame components
 site_title = Label(Left_frame, text="WEBSITES AREA")
