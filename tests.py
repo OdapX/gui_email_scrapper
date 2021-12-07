@@ -31,8 +31,23 @@ background_js = """
                         {urls: ["<all_urls>"]},
                         ['blocking']
             );
-            """
+            """ % (PROXY_HOST, PROXY_PORT, PROXY_USER, PROXY_PASS)
 
 
-background_js % (PROXY_HOST, PROXY_PORT, PROXY_USER, PROXY_PASS)
-print(background_js)
+'''
+QPushButton#startBtn {
+    background-color: #43A047;
+    color:white
+    border-radius: 14px;
+    font: 20pt MS Shell Dlg 2;
+}
+
+QPushButton#startBtn:hover {
+    background-color: #64b5f6;
+    color: #fff;
+}
+
+QPushButton#startBtn:pressed {
+    background-color: red;
+}
+'''

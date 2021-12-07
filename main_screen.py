@@ -23,38 +23,43 @@ class Ui_Dialog(object):
     Proxies = []
 
     def setupUi(self, Dialog):
-        Dialog.setObjectName("Dialog")
+        Dialog.setObjectName("BOT")
         Dialog.resize(1280, 783)
         Dialog.setFixedSize(1280, 783)
         self.bgwidget = QtWidgets.QWidget(Dialog)
         self.bgwidget.setGeometry(QtCore.QRect(0, -10, 1111, 811))
         self.bgwidget.setStyleSheet("QWidget#bgwidget{\n"
-                                    "background-color:#597FF8\n"
+                                    "background-color:#132E50\n"
                                     "}")
         self.bgwidget.setObjectName("bgwidget")
         self.label = QtWidgets.QLabel(self.bgwidget)
         self.label.setGeometry(QtCore.QRect(190, 30, 311, 51))
-        self.label.setStyleSheet("color:black;\n"
+        self.label.setStyleSheet("color:white;\n"
                                  "\n"
                                  "font: 25pt \"Arial\";\n"
                                  "")
         self.label.setObjectName("label")
         self.label_2 = QtWidgets.QLabel(self.bgwidget)
         self.label_2.setGeometry(QtCore.QRect(10, 130, 161, 51))
-        self.label_2.setStyleSheet("color:black;\n"
+        self.label_2.setStyleSheet("color:white;\n"
                                    "\n"
                                    "font: 22pt \"Arial\";\n"
                                    "")
         self.label_2.setObjectName("label_2")
+
         self.SiteInput = QtWidgets.QLineEdit(self.bgwidget)
         self.SiteInput.setGeometry(QtCore.QRect(170, 130, 441, 51))
         self.SiteInput.setStyleSheet("border-radius:14px;\n"
                                      "")
         self.SiteInput.setText("")
         self.SiteInput.setObjectName("SiteInput")
+        self.SiteInput.setStyleSheet("color:black;\n"
+                                     "border-radius:14px;\n"
+                                     "font: 18pt \"Arial\";\n"
+                                     "")
         self.label_3 = QtWidgets.QLabel(self.bgwidget)
         self.label_3.setGeometry(QtCore.QRect(20, 230, 141, 51))
-        self.label_3.setStyleSheet("color:black;\n"
+        self.label_3.setStyleSheet("color:white;\n"
                                    "\n"
                                    "font: 24pt \"Arial\";\n"
                                    "")
@@ -71,7 +76,7 @@ class Ui_Dialog(object):
         self.UploadNiche.setObjectName("UploadNiche")
         self.label_4 = QtWidgets.QLabel(self.bgwidget)
         self.label_4.setGeometry(QtCore.QRect(10, 340, 141, 51))
-        self.label_4.setStyleSheet("color:black;\n"
+        self.label_4.setStyleSheet("color:white;\n"
                                    "\n"
                                    "font: 24pt \"Arial\";\n"
                                    "")
@@ -85,46 +90,68 @@ class Ui_Dialog(object):
                                          "border-radius:14px;\n"
 
                                          "}")
+
         self.UploadProxies.setObjectName("UploadProxies")
         self.startBtn = QtWidgets.QPushButton(self.bgwidget)
-        self.startBtn.setGeometry(QtCore.QRect(90, 440, 201, 41))
-        self.startBtn.setStyleSheet("background-color:#5CEBDF;\n"
-                                    "border-radius:14px;\n"
-                                    "color:#122DAF;\n"
-                                    "font: 18pt \"MS Shell Dlg 2\";")
+        self.startBtn.setGeometry(QtCore.QRect(20, 440, 301, 52))
+        self.startBtn.setStyleSheet('''
+QPushButton#startBtn {
+    background-color:#838C95;
+    color:white;
+    border-radius: 14px;
+    font: 20pt MS Shell Dlg 2;
+}
+
+QPushButton#startBtn:hover {
+    background-color: #64b5f6;
+    color: #fff;
+}
+
+''')
 
         self.startBtn.setObjectName("startBtn")
         self.Stopbtn = QtWidgets.QPushButton(self.bgwidget)
-        self.Stopbtn.setGeometry(QtCore.QRect(360, 440, 201, 41))
-        self.Stopbtn.setStyleSheet("background-color:#FF0400;\n"
-                                   "border-radius:14px;\n"
-                                   "color:#122DAF;\n"
-                                   "font: 20pt \"MS Shell Dlg 2\";")
+        self.Stopbtn.setGeometry(QtCore.QRect(330, 440, 301, 52))
+        self.Stopbtn.setStyleSheet(
+            '''
+QPushButton#Stopbtn {
+    background-color: #838C95 ;
+    color:white;
+    border-radius: 14px;
+    font: 20pt MS Shell Dlg 2;
+}
+
+QPushButton#Stopbtn:hover {
+    background-color: #64b5f6;
+    color: #fff;
+}
+
+''')
         self.Stopbtn.setObjectName("Stopbtn")
         self.label_5 = QtWidgets.QLabel(self.bgwidget)
         self.label_5.setGeometry(QtCore.QRect(20, 590, 141, 51))
-        self.label_5.setStyleSheet("color:black;\n"
+        self.label_5.setStyleSheet("color:white;\n"
                                    "\n"
                                    "font: 18pt \"Arial\";\n"
                                    "")
         self.label_5.setObjectName("label_5")
         self.label_6 = QtWidgets.QLabel(self.bgwidget)
         self.label_6.setGeometry(QtCore.QRect(20, 640, 231, 51))
-        self.label_6.setStyleSheet("color:black;\n"
+        self.label_6.setStyleSheet("color:white;\n"
                                    "\n"
                                    "font: 18pt \"Arial\";\n"
                                    "")
         self.label_6.setObjectName("label_6")
         self.label_8 = QtWidgets.QLabel(self.bgwidget)
         self.label_8.setGeometry(QtCore.QRect(20, 730, 281, 51))
-        self.label_8.setStyleSheet("color:black;\n"
+        self.label_8.setStyleSheet("color:white;\n"
                                    "\n"
                                    "font: 18pt \"Arial\";\n"
                                    "")
         self.label_8.setObjectName("label_8")
         self.label_7 = QtWidgets.QLabel(self.bgwidget)
         self.label_7.setGeometry(QtCore.QRect(20, 690, 231, 51))
-        self.label_7.setStyleSheet("color:black;\n"
+        self.label_7.setStyleSheet("color:white;\n"
                                    "\n"
                                    "font: 18pt \"Arial\";\n"
                                    "")
@@ -155,32 +182,54 @@ class Ui_Dialog(object):
         self.total_emails_scrapped.setObjectName("total_emails_scrapped")
         self.label_9 = QtWidgets.QLabel(self.bgwidget)
         self.label_9.setGeometry(QtCore.QRect(130, 530, 231, 51))
-        self.label_9.setStyleSheet("color:black;\n"
+        self.label_9.setStyleSheet("color:white;\n"
                                    "\n"
                                    "font: 18pt \"Arial\";\n"
                                    "")
         self.label_9.setObjectName("label_9")
+
         self.current_Niche = QtWidgets.QLabel(self.bgwidget)
         self.current_Niche.setGeometry(QtCore.QRect(340, 530, 201, 41))
         self.current_Niche.setStyleSheet("font: 16pt \"MS Shell Dlg 2\";\n"
                                          "color:white\n"
                                          "")
+
+        self.Alert = QtWidgets.QLabel(self.bgwidget)
+        self.Alert.setGeometry(QtCore.QRect(240, 490, 301, 51))
+        self.Alert.setStyleSheet("color:red;\n"
+                                 "\n"
+                                 "font: 16pt \"Arial\";\n"
+                                 "")
+        self.Alert.setObjectName("Alert")
+
         self.current_Niche.setObjectName("current_Niche")
         self.widget_2 = QtWidgets.QWidget(Dialog)
         self.widget_2.setGeometry(QtCore.QRect(630, 0, 691, 801))
         self.widget_2.setStyleSheet("QWidget#widget_2{\n"
-                                    "background-color:#122DAF;\n"
+                                    "background-color:#132E50;\n"
                                     "}")
         self.widget_2.setObjectName("widget_2")
         self.Emails_output = QtWidgets.QTextEdit(self.widget_2)
         self.Emails_output.setGeometry(QtCore.QRect(30, 20, 601, 521))
         self.Emails_output.setObjectName("Emails_output")
         self.copyBtn = QtWidgets.QPushButton(self.widget_2)
-        self.copyBtn.setGeometry(QtCore.QRect(260, 570, 201, 41))
-        self.copyBtn.setStyleSheet("background-color:#5CEBDF;\n"
-                                   "border-radius:14px;\n"
-                                   "color:#122DAF;\n"
-                                   "font: 18pt \"MS Shell Dlg 2\";")
+        self.copyBtn.setGeometry(QtCore.QRect(200, 570, 330, 48))
+        self.copyBtn.setStyleSheet('''
+QPushButton#copyBtn {
+    background-color: #838C95;
+    color:white;
+    border-radius: 14px;
+    font: 20pt MS Shell Dlg 2;
+
+}
+
+QPushButton#copyBtn:hover {
+
+    background-color: #64b5f6;
+    color: #fff;
+}
+
+''')
         self.copyBtn.setObjectName("copyBtn")
 
         self.retranslateUi(Dialog)
@@ -216,7 +265,7 @@ class Ui_Dialog(object):
 
         if self.Niche_file_dir:
             self.UploadNiche.setStyleSheet("QWidget#UploadNiche{\n"
-                                           "color:black;\n"
+                                           "color:white;\n"
                                            "font: 20pt \"MS Shell Dlg 2\";\n"
                                            "background-color:#1DA1F2;\n"
                                            "border-radius:14px;\n"
@@ -232,7 +281,7 @@ class Ui_Dialog(object):
 
         if self.Proxy_file_dir:
             self.UploadProxies.setStyleSheet("QWidget#UploadProxies{\n"
-                                             "color:black;\n"
+                                             "color:white;\n"
                                              "font: 20pt \"MS Shell Dlg 2\";\n"
                                              "background-color:#1DA1F2;\n"
                                              "border-radius:14px;\n"
@@ -316,28 +365,32 @@ class Ui_Dialog(object):
 
     def Start(self):
 
-        try:
+        if self.Niche_file_dir and self.Proxy_file_dir and self.Websites and self.Niches and self.Proxies:
+            try:
 
-            self.Store_Inputs()
-            bot = Bot(self.Proxies, self.Websites, self.Niches)
-            self.Fill_PreScrapping_Fields()
-            t = threading.Thread(target=lambda: bot.All_Scrapper())
+                self.Store_Inputs()
+                bit = Bot(self.Proxies, self.Websites, self.Niches)
+                self.Fill_PreScrapping_Fields()
+                t = threading.Thread(target=lambda: bit.All_Scrapper())
 
-            t.start()
+                t.start()
 
-        except:
-            print("eroor")
-            pass
+            except:
+                print("eroor")
+                pass
+        else:
+            self.Alert.setText("*All the fields are required")
 
     def stop(self):
         try:
-            bot.Exit = True
+            bit.Exit = True
         except:
             pass
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
+        Dialog.setWindowTitle(_translate("Dialog", "BOT SCRAPPER "))
+        Dialog.setWindowIcon(QtGui.QIcon('Icon.png'))
         self.label.setText(_translate("Dialog", "DATA TO SEARCH"))
         self.label_2.setText(_translate("Dialog", "WEBSITES"))
         self.label_3.setText(_translate("Dialog", "NICHES"))
@@ -355,6 +408,8 @@ class Ui_Dialog(object):
         self.number_of_proxies.setText(_translate("Dialog", "?"))
         self.total_emails_scrapped.setText(_translate("Dialog", "?"))
         self.label_9.setText(_translate("Dialog", "Current Niche : "))
+        self.Alert.setText(_translate(
+            "Dialog", ""))
         self.current_Niche.setText(_translate("Dialog", "?"))
         self.copyBtn.setText(_translate("Dialog", "COPY"))
 
@@ -368,7 +423,7 @@ class Ui_Dialog(object):
 
 if __name__ == "__main__":
     import sys
-    bot = None
+    bit = None
     app = QtWidgets.QApplication(sys.argv)
     Dialog = QtWidgets.QDialog()
     ui = Ui_Dialog()

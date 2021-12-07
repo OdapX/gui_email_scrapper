@@ -6,6 +6,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 import re
+import sqlite3
 
 
 class Bot:
@@ -125,7 +126,7 @@ class Bot:
 
    # Launch_Browser to be only used after the Driver is setup
    # using the Setup_Driver function.
-    def Scrap_one_Niche(self, query):
+    def Scrap_one_Niche(self, query, niche, website):
 
         if self.Exit:
             try:
@@ -165,18 +166,18 @@ class Bot:
 
                         line = str(data.text)
                         matches = re.findall(r'[\w.+-]+@[\w-]+\.[\w.-]+', line)
-                        unique_emails = set()
-                        my_file = open("emails.txt", "a+", encoding='utf-8')
-
+                        con = sqlite3.connect('Emails.db')
+                        cur = con.cursor()
                         for match in matches:
                             if match[-1] == '.':
                                 match = match[0: -1]
-                            unique_emails.add(match)
-
-                        for email in unique_emails:
-                            my_file.write(email + '\n')
-                        my_file.close()
-
+                                try:
+                                    cur.execute(
+                                        'insert into Emails values(?,?,?)', (match, niche, website))
+                                except:
+                                    pass
+                        con.commit()
+                        con.close()
                         self.Driver.execute_script(
                             "window.scrollTo(0, document.body.scrollHeight);")
 
@@ -208,26 +209,20 @@ class Bot:
 
                         else:
                             self.Current_Niche = niche
-                            print(self.Current_Niche)
-                            my_file = open("emails.txt", "a+",
-                                           encoding='utf-8')
-                            my_file.write(
-                                f"__________ {website}   :   {niche} _____________ \n")
-                            my_file.close()
                             query = f'site:{website} niche:"{niche}" "@gmail.com"'
 
                             # scrap one niche according to the query string
                             # when a proxy is blocked close the driver and
                             # launch new one with a new proxy and scrap the niche
                             # in use again.
-
                             try:
-                                self.Scrap_one_Niche(query)
+                                self.Scrap_one_Niche(query, niche, website)
                             except:
                                 self.Driver.quit()
                                 self.Setup_Driver()
-                                self.Scrap_one_Niche(query)
+                                self.Scrap_one_Niche(query, niche, website)
                 self.Finished_Scrapping = True
+                self.Driver.quit()
 
             except:
                 return
