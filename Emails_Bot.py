@@ -147,6 +147,7 @@ class Bot:
 
             except:
                 print(f"error occurred {query}")
+                return
 
             while(True):
                 if self.Exit:
@@ -226,10 +227,10 @@ class Bot:
                                 self.Driver.quit()
                                 self.Setup_Driver()
                                 self.Scrap_one_Niche(query)
-                    self.Finished_Scrapping = True
+                self.Finished_Scrapping = True
 
             except:
-                pass
+                return
 
 
 # PROXY_LIST = [

@@ -12,12 +12,20 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from gui2 import Ui_MainWindow
 from Emails_Bot import Bot
 import threading
+from datetime import datetime
 
 
 class Ui_Dialog(object):
+    Niche_file_dir = ''
+    Proxy_file_dir = ''
+    Websites = []
+    Niches = []
+    Proxies = []
+
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(1280, 783)
+        Dialog.setFixedSize(1280, 783)
         self.bgwidget = QtWidgets.QWidget(Dialog)
         self.bgwidget.setGeometry(QtCore.QRect(0, -10, 1111, 811))
         self.bgwidget.setStyleSheet("QWidget#bgwidget{\n"
@@ -175,22 +183,155 @@ class Ui_Dialog(object):
                                    "font: 18pt \"MS Shell Dlg 2\";")
         self.copyBtn.setObjectName("copyBtn")
 
-        # Buttons click Events
-        self.startBtn.clicked.connect(self.Start)
-        self.Stopbtn.clicked.connect(self.stop)
-
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
-    def Start(self):
+
+# __________________________________________
+#
+#
+#   Buttons EVENTS AND CLICKS
+#
+# ____________________________________________
+
+        self.startBtn.clicked.connect(self.Start)
+        self.Stopbtn.clicked.connect(self.stop)
+        self.UploadNiche.clicked.connect(self.Upload_Niche_FILE)
+        self.UploadProxies.clicked.connect(self.Upload_Proxies_FILE)
+
+
+# __________________________________________
+#
+#
+#   FILES UPLOAD AND PREREQUISITE DATA
+#
+# ____________________________________________
+
+
+    def Upload_Niche_FILE(self):
+
+        dir = './'
+        self.Niche_file_dir = QtWidgets.QFileDialog.getOpenFileName(None, "Select a file...",
+                                                                    dir, filter="*.txt")[0]
+
+        if self.Niche_file_dir:
+            self.UploadNiche.setStyleSheet("QWidget#UploadNiche{\n"
+                                           "color:black;\n"
+                                           "font: 20pt \"MS Shell Dlg 2\";\n"
+                                           "background-color:#1DA1F2;\n"
+                                           "border-radius:14px;\n"
+
+                                           "}")
+            self.UploadNiche.setText("Uploaded")
+
+    def Upload_Proxies_FILE(self):
+
+        dir = './'
+        self.Proxy_file_dir = QtWidgets.QFileDialog.getOpenFileName(None, "Select a file...",
+                                                                    dir, filter="*.txt")[0]
+
+        if self.Proxy_file_dir:
+            self.UploadProxies.setStyleSheet("QWidget#UploadProxies{\n"
+                                             "color:black;\n"
+                                             "font: 20pt \"MS Shell Dlg 2\";\n"
+                                             "background-color:#1DA1F2;\n"
+                                             "border-radius:14px;\n"
+
+                                             "}")
+            self.UploadProxies.setText("Uploaded")
+
+    def Fill_PreScrapping_Fields(self):
+
         try:
-            t.start()
+            self.start_time.setText(datetime.now().strftime('%H:%M:%S'))
         except:
+            pass
+
+        try:
+            count_Niches = 0
+            with open(self.Niche_file_dir) as Niche_File:
+
+                Lines = Niche_File.readlines()
+                for line in Lines:
+                    if line != '\n':
+                        count_Niches += 1
+
+            self.number_of_niches.setText(str(count_Niches))
+        except:
+            pass
+
+        try:
+            count_Proxies = 0
+            with open(self.Proxy_file_dir) as Proxy_File:
+
+                Lines = Proxy_File.readlines()
+                for line in Lines:
+                    if line != '\n':
+                        count_Proxies += 1
+
+            self.number_of_proxies.setText(str(count_Proxies))
+        except:
+            pass
+
+
+# ___________________________
+#
+# Store data into the class variables
+#
+# ____________________________
+
+    def Store_Inputs(self):
+
+        self.Websites = self.SiteInput.text().split(',')
+
+        with open(self.Niche_file_dir) as Niche_File:
+            for Line in Niche_File:
+
+                self.Niches.append(Line.split('\n')[0])
+
+        with open(self.Proxy_file_dir) as Proxy_File:
+            for Line in Proxy_File:
+                proxy = {
+                    'PROXY_HOST': '',
+                    'PROXY_PORT': '',
+                    'PROXY_USER': '',
+                    'PROXY_PASS': ''
+
+                }
+                Proxy_Details = Line.split('\n')[0].split(':')
+                proxy['PROXY_HOST'] = Proxy_Details[0]
+                proxy['PROXY_PORT'] = Proxy_Details[1]
+                proxy['PROXY_USER'] = Proxy_Details[2]
+                proxy['PROXY_PASS'] = Proxy_Details[3]
+
+                self.Proxies.append(proxy)
+
+
+# __________________________________________
+#
+# Handlers
+#
+# __________________________________________
+
+
+    def Start(self):
+
+        try:
+
+            self.Store_Inputs()
+            bot = Bot(self.Proxies, self.Websites, self.Niches)
+            self.Fill_PreScrapping_Fields()
+            t = threading.Thread(target=lambda: bot.All_Scrapper())
+
+            t.start()
+
+        except:
+            print("eroor")
             pass
 
     def stop(self):
         try:
-            bit.Exit = True
+            bot.Exit = True
         except:
             pass
 
@@ -227,35 +368,7 @@ class Ui_Dialog(object):
 
 if __name__ == "__main__":
     import sys
-    PROXY_LIST = [
-        {
-            'PROXY_HOST': '186.65.117.169',
-            'PROXY_PORT': '9582',
-            'PROXY_USER': '2c91Ug',
-            'PROXY_PASS': '6MEc6s'
-
-        },
-
-        {
-            'PROXY_HOST': '46.232.14.210',
-            'PROXY_PORT': '8000',
-            'PROXY_USER': 'jHmVb5',
-            'PROXY_PASS': 'VaDjAG'
-
-        },
-        {
-            'PROXY_HOST': '46.232.15.30',
-            'PROXY_PORT': '8000',
-            'PROXY_USER': 'jHmVb5',
-            'PROXY_PASS': 'VaDjAG'
-
-        },
-
-    ]
-    websites = ['instagram.com']
-    niches = ['dogs', 'cats']
-    bit = Bot(PROXY_LIST, websites, niches)
-    t = threading.Thread(target=lambda: bit.All_Scrapper())
+    bot = None
     app = QtWidgets.QApplication(sys.argv)
     Dialog = QtWidgets.QDialog()
     ui = Ui_Dialog()
