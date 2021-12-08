@@ -10,11 +10,16 @@ import sqlite3
 
 
 class Bot:
+   # counter of the total emails scrapper - will be used in the GUI
+    Total_Emails = 0
     # will be used to disable launching another request on a running instance
     # -make sue clicking start button many times doesn't break the code
 
     Finished_Scrapping = False
 
+    Error = False
+
+    Proxy_Blocked = False
     # wil be used to stop scrapping on stop-botton clicked
 
     Exit = False
@@ -147,7 +152,7 @@ class Bot:
                     By.XPATH, '/html/body/div[1]/div[3]/form/div[1]/div[1]/div[3]/center/input[1]').click()
 
             except:
-                print(f"error occurred {query}")
+                self.Proxy_Blocked = True
                 return
 
             while(True):
@@ -156,6 +161,7 @@ class Bot:
                         self.Driver.quit()
                         return
                     except:
+                        self.Error = True
                         return
                 else:
                     try:
@@ -174,6 +180,8 @@ class Bot:
                                 try:
                                     cur.execute(
                                         'insert into Emails values(?,?,?)', (match, niche, website))
+                                    self.Total_Emails += 1
+                                    print(self.Total_Emails)
                                 except:
                                     pass
                         con.commit()
@@ -195,6 +203,7 @@ class Bot:
                 self.Setup_Driver()
             except:
                 print("error Launching..Aborting")
+                self.Error = True
                 return
 
             try:
@@ -205,6 +214,7 @@ class Bot:
                                 self.Driver.quit()
                                 return
                             except:
+                                self.Error = True
                                 return
 
                         else:
@@ -217,14 +227,21 @@ class Bot:
                             # in use again.
                             try:
                                 self.Scrap_one_Niche(query, niche, website)
+                                if(self.Proxy_Blocked):
+                                    self.Proxy_Blocked = False
+                                    self.Driver.quit()
+                                    print("here")
+                                    self.Setup_Driver()
+                                    self.Scrap_one_Niche(query, niche, website)
+
                             except:
-                                self.Driver.quit()
-                                self.Setup_Driver()
-                                self.Scrap_one_Niche(query, niche, website)
+                                self.Error = True
+                                pass
                 self.Finished_Scrapping = True
                 self.Driver.quit()
 
             except:
+                self.Error = True
                 return
 
 

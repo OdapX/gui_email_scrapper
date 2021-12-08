@@ -1,3 +1,6 @@
+from time import sleep
+import threading
+
 PROXY_HOST = "123"
 PROXY_PORT = "12553"
 PROXY_USER = "yahya"
@@ -34,20 +37,17 @@ background_js = """
             """ % (PROXY_HOST, PROXY_PORT, PROXY_USER, PROXY_PASS)
 
 
-'''
-QPushButton#startBtn {
-    background-color: #43A047;
-    color:white
-    border-radius: 14px;
-    font: 20pt MS Shell Dlg 2;
-}
+def foo(t):
+    sleep(10)
+    t.cancel()
 
-QPushButton#startBtn:hover {
-    background-color: #64b5f6;
-    color: #fff;
-}
 
-QPushButton#startBtn:pressed {
-    background-color: red;
-}
-'''
+def printit():
+    t = threading.Timer(5.0, printit).start()
+
+    print("Hello, World!")
+    foo(t)
+
+
+printit()
+# continue with the rest of your code

@@ -13,6 +13,7 @@ from gui2 import Ui_MainWindow
 from Emails_Bot import Bot
 import threading
 from datetime import datetime
+from time import sleep
 
 
 class Ui_Dialog(object):
@@ -163,13 +164,13 @@ QPushButton#Stopbtn:hover {
                                       "")
         self.start_time.setObjectName("start_time")
         self.number_of_niches = QtWidgets.QLabel(self.bgwidget)
-        self.number_of_niches.setGeometry(QtCore.QRect(240, 650, 191, 31))
+        self.number_of_niches.setGeometry(QtCore.QRect(280, 650, 191, 31))
         self.number_of_niches.setStyleSheet("font: 16pt \"MS Shell Dlg 2\";\n"
                                             "color:white\n"
                                             "")
         self.number_of_niches.setObjectName("number_of_niches")
         self.number_of_proxies = QtWidgets.QLabel(self.bgwidget)
-        self.number_of_proxies.setGeometry(QtCore.QRect(250, 700, 301, 31))
+        self.number_of_proxies.setGeometry(QtCore.QRect(280, 700, 301, 31))
         self.number_of_proxies.setStyleSheet("font: 16pt \"MS Shell Dlg 2\";\n"
                                              "color:white\n"
                                              "")
@@ -189,7 +190,7 @@ QPushButton#Stopbtn:hover {
         self.label_9.setObjectName("label_9")
 
         self.current_Niche = QtWidgets.QLabel(self.bgwidget)
-        self.current_Niche.setGeometry(QtCore.QRect(340, 530, 201, 41))
+        self.current_Niche.setGeometry(QtCore.QRect(300, 535, 201, 41))
         self.current_Niche.setStyleSheet("font: 16pt \"MS Shell Dlg 2\";\n"
                                          "color:white\n"
                                          "")
@@ -322,39 +323,61 @@ QPushButton#copyBtn:hover {
         except:
             pass
 
-
-# ___________________________
+    def Get_Scrapping_Update(self, bot):
+        old_niche = ''
+        previous_number = 0
+        sleep(5)
+        print("EWEEEEEEEFE")
+        # only keep getting updates if the scrapping is not finished
+        # and no error was occurred from the bot side
+        try:
+            while not bot.Finished_Scrapping and not bot.Error:
+                if old_niche != bot.Current_Niche or previous_number != bot.Total_Emails:
+                    try:
+                        self.current_Niche.setText(bot.Current_Niche)
+                        self.total_emails_scrapped.setText(bot.Total_Emails)
+                        old_niche = bot.Current_Niche
+                        previous_number = bot.Total_Emails
+                    except:
+                        pass
+                else:
+                    sleep(5)
+        except Exception as e:
+            print(e)
+            pass
+    # ___________________________
 #
 # Store data into the class variables
 #
 # ____________________________
 
     def Store_Inputs(self):
+        try:
+            self.Websites = self.SiteInput.text().split(',')
 
-        self.Websites = self.SiteInput.text().split(',')
+            with open(self.Niche_file_dir) as Niche_File:
+                for Line in Niche_File:
 
-        with open(self.Niche_file_dir) as Niche_File:
-            for Line in Niche_File:
+                    self.Niches.append(Line.split('\n')[0])
 
-                self.Niches.append(Line.split('\n')[0])
+            with open(self.Proxy_file_dir) as Proxy_File:
+                for Line in Proxy_File:
+                    proxy = {
+                        'PROXY_HOST': '',
+                        'PROXY_PORT': '',
+                        'PROXY_USER': '',
+                        'PROXY_PASS': ''
 
-        with open(self.Proxy_file_dir) as Proxy_File:
-            for Line in Proxy_File:
-                proxy = {
-                    'PROXY_HOST': '',
-                    'PROXY_PORT': '',
-                    'PROXY_USER': '',
-                    'PROXY_PASS': ''
+                    }
+                    Proxy_Details = Line.split('\n')[0].split(':')
+                    proxy['PROXY_HOST'] = Proxy_Details[0]
+                    proxy['PROXY_PORT'] = Proxy_Details[1]
+                    proxy['PROXY_USER'] = Proxy_Details[2]
+                    proxy['PROXY_PASS'] = Proxy_Details[3]
 
-                }
-                Proxy_Details = Line.split('\n')[0].split(':')
-                proxy['PROXY_HOST'] = Proxy_Details[0]
-                proxy['PROXY_PORT'] = Proxy_Details[1]
-                proxy['PROXY_USER'] = Proxy_Details[2]
-                proxy['PROXY_PASS'] = Proxy_Details[3]
-
-                self.Proxies.append(proxy)
-
+                    self.Proxies.append(proxy)
+        except:
+            pass
 
 # __________________________________________
 #
@@ -362,18 +385,19 @@ QPushButton#copyBtn:hover {
 #
 # __________________________________________
 
-
     def Start(self):
+        self.Store_Inputs()
 
         if self.Niche_file_dir and self.Proxy_file_dir and self.Websites and self.Niches and self.Proxies:
             try:
-
-                self.Store_Inputs()
-                bit = Bot(self.Proxies, self.Websites, self.Niches)
+                bot = Bot(self.Proxies, self.Websites, self.Niches)
                 self.Fill_PreScrapping_Fields()
-                t = threading.Thread(target=lambda: bit.All_Scrapper())
-
+                t = threading.Thread(target=lambda: bot.All_Scrapper())
                 t.start()
+
+                t1 = threading.Thread(
+                    target=lambda: self.Get_Scrapping_Update(bot))
+                t1.start()
 
             except:
                 print("eroor")
@@ -383,7 +407,7 @@ QPushButton#copyBtn:hover {
 
     def stop(self):
         try:
-            bit.Exit = True
+            bot.Exit = True
         except:
             pass
 
@@ -404,9 +428,9 @@ QPushButton#copyBtn:hover {
         self.label_8.setText(_translate("Dialog", "Total Emails Scrapped :"))
         self.label_7.setText(_translate("Dialog", "Number of Proxies  : "))
         self.start_time.setText(_translate("Dialog", "?"))
-        self.number_of_niches.setText(_translate("Dialog", "?"))
-        self.number_of_proxies.setText(_translate("Dialog", "?"))
-        self.total_emails_scrapped.setText(_translate("Dialog", "?"))
+        self.number_of_niches.setText(_translate("Dialog", "0"))
+        self.number_of_proxies.setText(_translate("Dialog", "0"))
+        self.total_emails_scrapped.setText(_translate("Dialog", "0"))
         self.label_9.setText(_translate("Dialog", "Current Niche : "))
         self.Alert.setText(_translate(
             "Dialog", ""))
@@ -423,7 +447,7 @@ QPushButton#copyBtn:hover {
 
 if __name__ == "__main__":
     import sys
-    bit = None
+    bot = None
     app = QtWidgets.QApplication(sys.argv)
     Dialog = QtWidgets.QDialog()
     ui = Ui_Dialog()

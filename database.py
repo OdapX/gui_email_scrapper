@@ -8,7 +8,7 @@ cur = con.cursor()
 
 
 cur.execute("""
-    SELECT *
+    SELECT count(*)
 FROM Emails;
 
 """)
