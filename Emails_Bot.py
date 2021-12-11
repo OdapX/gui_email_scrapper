@@ -10,8 +10,7 @@ import sqlite3
 
 
 class Bot:
-   # counter of the total emails scrapper - will be used in the GUI
-    Total_Emails = 0
+
     # will be used to disable launching another request on a running instance
     # -make sue clicking start button many times doesn't break the code
 
@@ -26,12 +25,12 @@ class Bot:
     # Initiate the data needed for scrapping
     Websites = []
     Niches = []
-   # keep count of the proxy used
+    # keep count of the proxy used
     Counter = 0
 
     # current niche will be used to let the user know what niche is the program at.
 
-    Current_Niche = ''
+    Current_Niche = ""
 
     Driver = None
     # driver configs
@@ -56,8 +55,8 @@ class Bot:
         }
         """
 
-    background_js = ''
-   # Initialize the Proxy list to be used
+    background_js = ""
+    # Initialize the Proxy list to be used
 
     def __init__(self, PROXY_LIST, Websites, Niches):
         self.PROXY_LIST = PROXY_LIST
@@ -69,10 +68,10 @@ class Bot:
     # we go back to the first proxy and we rotate that way
 
     def Setup_Configurations(self):
-        PROXY_HOST = self.PROXY_LIST[self.Counter]['PROXY_HOST']
-        PROXY_PORT = self.PROXY_LIST[self.Counter]['PROXY_PORT']
-        PROXY_USER = self.PROXY_LIST[self.Counter]['PROXY_USER']
-        PROXY_PASS = self.PROXY_LIST[self.Counter]['PROXY_PASS']
+        PROXY_HOST = self.PROXY_LIST[self.Counter]["PROXY_HOST"]
+        PROXY_PORT = self.PROXY_LIST[self.Counter]["PROXY_PORT"]
+        PROXY_USER = self.PROXY_LIST[self.Counter]["PROXY_USER"]
+        PROXY_PASS = self.PROXY_LIST[self.Counter]["PROXY_PASS"]
         self.background_js = """
         var config = {
                 mode: "fixed_servers",
@@ -102,7 +101,12 @@ class Bot:
                     {urls: ["<all_urls>"]},
                     ['blocking']
         );
-        """ % (PROXY_HOST, PROXY_PORT, PROXY_USER, PROXY_PASS)
+        """ % (
+            PROXY_HOST,
+            PROXY_PORT,
+            PROXY_USER,
+            PROXY_PASS,
+        )
 
         self.Counter += 1
 
@@ -116,21 +120,21 @@ class Bot:
 
         path = os.path.dirname(os.path.abspath(__file__))
         chrome_options = webdriver.ChromeOptions()
-        pluginfile = 'proxy_auth_plugin.zip'
+        pluginfile = "proxy_auth_plugin.zip"
 
         self.Setup_Configurations()
 
-        with zipfile.ZipFile(pluginfile, 'w') as zp:
+        with zipfile.ZipFile(pluginfile, "w") as zp:
             zp.writestr("manifest.json", self.manifest_json)
             zp.writestr("background.js", self.background_js)
         chrome_options.add_extension(pluginfile)
 
         self.Driver = webdriver.Chrome(
-            os.path.join(path, 'chromedriver'),
-            chrome_options=chrome_options)
+            os.path.join(path, "chromedriver"), chrome_options=chrome_options
+        )
 
-   # Launch_Browser to be only used after the Driver is setup
-   # using the Setup_Driver function.
+    # Launch_Browser to be only used after the Driver is setup
+    # using the Setup_Driver function.
     def Scrap_one_Niche(self, query, niche, website):
 
         if self.Exit:
@@ -145,17 +149,21 @@ class Bot:
                 self.Driver.get("https://www.google.com/")
 
                 input = self.Driver.find_element(
-                    By.XPATH, '/ html/body/div[1]/div[3]/form/div[1]/div[1]/div[1]/div/div[2]/input')
+                    By.XPATH,
+                    "/ html/body/div[1]/div[3]/form/div[1]/div[1]/div[1]/div/div[2]/input",
+                )
                 input.send_keys(query)
 
                 self.Driver.find_element(
-                    By.XPATH, '/html/body/div[1]/div[3]/form/div[1]/div[1]/div[3]/center/input[1]').click()
+                    By.XPATH,
+                    "/html/body/div[1]/div[3]/form/div[1]/div[1]/div[3]/center/input[1]",
+                ).click()
 
             except:
                 self.Proxy_Blocked = True
                 return
 
-            while(True):
+            while True:
                 if self.Exit:
                     try:
                         self.Driver.quit()
@@ -167,30 +175,30 @@ class Bot:
                     try:
                         # TODO:write this in a database instead of a txt file
 
-                        data = self.Driver.find_element(
-                            By.XPATH, '//*[@id="rso"]')
+                        data = self.Driver.find_element(By.XPATH, '//*[@id="rso"]')
 
                         line = str(data.text)
-                        matches = re.findall(r'[\w.+-]+@[\w-]+\.[\w.-]+', line)
-                        con = sqlite3.connect('Emails.db')
+                        matches = re.findall(r"[\w.+-]+@[\w-]+\.[\w.-]+", line)
+                        con = sqlite3.connect("Emails.db")
                         cur = con.cursor()
                         for match in matches:
-                            if match[-1] == '.':
-                                match = match[0: -1]
+                            if match[-1] == ".":
+                                match = match[0:-1]
                                 try:
                                     cur.execute(
-                                        'insert into Emails values(?,?,?)', (match, niche, website))
-                                    self.Total_Emails += 1
-                                    print(self.Total_Emails)
+                                        "insert into Emails values(?,?,?)",
+                                        (match, niche, website),
+                                    )
+
                                 except:
                                     pass
                         con.commit()
                         con.close()
                         self.Driver.execute_script(
-                            "window.scrollTo(0, document.body.scrollHeight);")
+                            "window.scrollTo(0, document.body.scrollHeight);"
+                        )
 
-                        self.Driver.find_element(
-                            By.ID, "pnnext").click()
+                        self.Driver.find_element(By.ID, "pnnext").click()
                     except:
                         break
 
@@ -227,7 +235,7 @@ class Bot:
                             # in use again.
                             try:
                                 self.Scrap_one_Niche(query, niche, website)
-                                if(self.Proxy_Blocked):
+                                if self.Proxy_Blocked:
                                     self.Proxy_Blocked = False
                                     self.Driver.quit()
                                     print("here")
