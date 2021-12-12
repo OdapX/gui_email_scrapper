@@ -23,8 +23,11 @@ class Ui_Dialog(object):
     Websites = []
     Niches = []
     Proxies = []
+    STOP = False
+    bot = None
 
     def setupUi(self, Dialog):
+
         Dialog.setObjectName("BOT")
         Dialog.resize(1280, 783)
         Dialog.setFixedSize(1280, 783)
@@ -231,7 +234,7 @@ QPushButton#copyBtn:hover {
         self.Stopbtn.clicked.connect(self.stop)
         self.UploadNiche.clicked.connect(self.Upload_Niche_FILE)
         self.UploadProxies.clicked.connect(self.Upload_Proxies_FILE)
-        self.copyBtn.clicked.connect(self.Get_Emails)
+        # self.copyBtn.clicked.connect()
 
     # __________________________________________
     #
@@ -239,23 +242,36 @@ QPushButton#copyBtn:hover {
     #   FILES UPLOAD AND PREREQUISITE DATA
     #
     # ____________________________________________
+
     def Get_Emails(self):
-        con = sqlite3.connect("Emails.db")
-        cur = con.cursor()
-        cur.execute(
-            """
-            SELECT rowid,email,niche,website
-            FROM Emails;
+        Start_RowId = 0
+        while not self.STOP or self.bot.Error:
+            con = sqlite3.connect("Emails.db")
+            cur = con.cursor()
+            cur.execute(
+                """
+                        SELECT rowid,email,niche,website
+                        FROM Emails where rowid > %d;
 
-                      """
-        )
+                                """
+                % Start_RowId
+            )
 
-        emails = cur.fetchall()
+            emails = cur.fetchall()
+            cur.execute(
+                """
+                        SELECT max(rowid)
+                        FROM Emails ;
 
-        con.commit()
-        con.close()
-        for e in emails:
-            self.Emails_output.append(f"\n  {e[0]} \t\t\t{e[1]} \t\t{e[2]}  ")
+                                """
+            )
+            Start_RowId = cur.fetchone()[0]
+            con.commit()
+            con.close()
+            for e in emails:
+                self.Emails_output.append(f"\n{e[0]} \t{e[1]}\t{e[2]} ")
+            self.total_emails_scrapped.setText(str(Start_RowId))
+            sleep(5)
 
     def Upload_Niche_FILE(self):
 
@@ -326,7 +342,7 @@ QPushButton#copyBtn:hover {
         except:
             pass
 
-    def Get_Scrapping_Update(self, bot):
+    def Get_Scrapping_Update(self):
         old_niche = ""
         emails_number = 0
         sleep(5)
@@ -334,7 +350,7 @@ QPushButton#copyBtn:hover {
         # only keep getting updates if the scrapping is not finished
         # and no error was occurred from the bot side
         try:
-            while not bot.Finished_Scrapping and not bot.Error:
+            while not self.bot.Finished_Scrapping and not self.bot.Error:
                 con = sqlite3.connect("Emails.db")
                 cur = con.cursor()
                 total_rows = cur.execute(
@@ -343,10 +359,10 @@ QPushButton#copyBtn:hover {
                 con.close()
                 if emails_number != total_rows:
                     try:
-                        self.current_Niche.setText(bot.Current_Niche)
+                        self.current_Niche.setText(self.bot.Current_Niche)
                         self.total_emails_scrapped.setText(total_rows)
-                        old_niche = bot.Current_Niche
-                        emails_number = bot.Total_Emails
+                        old_niche = self.bot.Current_Niche
+                        emails_number = self.bot.Total_Emails
                     except:
                         pass
                 else:
@@ -405,15 +421,15 @@ QPushButton#copyBtn:hover {
             and self.Proxies
         ):
             try:
-                bot = Bot(self.Proxies, self.Websites, self.Niches)
+                self.bot = Bot(self.Proxies, self.Websites, self.Niches)
                 self.Fill_PreScrapping_Fields()
-                t = threading.Thread(target=lambda: bot.All_Scrapper())
+                t = threading.Thread(target=lambda: self.bot.All_Scrapper())
                 t.start()
 
-                t1 = threading.Thread(target=lambda: self.Get_Scrapping_Update(bot))
+                t1 = threading.Thread(target=lambda: self.Get_Scrapping_Update())
                 t1.start()
 
-                t2 = threading.Thread(target=lambda: self.Get_Scrapping_Update(bot))
+                t2 = threading.Thread(target=lambda: self.Get_Emails())
                 t2.start()
 
             except:
@@ -424,7 +440,8 @@ QPushButton#copyBtn:hover {
 
     def stop(self):
         try:
-            bot.Exit = True
+            self.bot.Exit = True
+            self.STOP = True
         except:
             pass
 
@@ -465,7 +482,6 @@ QPushButton#copyBtn:hover {
 if __name__ == "__main__":
     import sys
 
-    bot = None
     app = QtWidgets.QApplication(sys.argv)
     Dialog = QtWidgets.QDialog()
     ui = Ui_Dialog()

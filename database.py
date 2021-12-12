@@ -30,17 +30,25 @@ cur = con.cursor()
 # ;
 
 # """
-# )
+# )\
 
 cur.execute(
     """
-    SELECT rowid,email,niche,website
-FROM Emails;
+                SELECT min(rowid)
+                FROM Emails ;
 
-"""
+                        """
+)
+print(cur.fetchall()[0])
+cur.execute(
+    """
+                SELECT max(rowid)
+                FROM Emails ;
+
+                        """
 )
 
-print(cur.fetchall())
+print(cur.fetchall()[0])
 
 con.commit()
 con.close()

@@ -109,6 +109,7 @@ class Bot:
         )
 
         self.Counter += 1
+        print(self.Counter)
 
     # //TODO:Execute this First in main
 
@@ -161,6 +162,7 @@ class Bot:
 
             except:
                 self.Proxy_Blocked = True
+                print("BLOCKED")
                 return
 
             while True:
@@ -194,9 +196,13 @@ class Bot:
                                     pass
                         con.commit()
                         con.close()
-                        self.Driver.execute_script(
-                            "window.scrollTo(0, document.body.scrollHeight);"
-                        )
+                        try:
+                            self.Driver.execute_script(
+                                "window.scrollTo(0, document.body.scrollHeight);"
+                            )
+                        except:
+                            self.Proxy_Blocked = True
+                            print("BLOCKED")
 
                         self.Driver.find_element(By.ID, "pnnext").click()
                     except:
