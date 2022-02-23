@@ -9,7 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from gui2 import Ui_MainWindow
+import os
 from Emails_Bot import Bot
 import threading
 from datetime import datetime
@@ -39,11 +39,13 @@ class Ui_Dialog(object):
         self.bgwidget.setObjectName("bgwidget")
         self.label = QtWidgets.QLabel(self.bgwidget)
         self.label.setGeometry(QtCore.QRect(190, 30, 311, 51))
-        self.label.setStyleSheet("color:white;\n" "\n" 'font: 25pt "Arial";\n' "")
+        self.label.setStyleSheet(
+            "color:white;\n" "\n" 'font: 25pt "Arial";\n' "")
         self.label.setObjectName("label")
         self.label_2 = QtWidgets.QLabel(self.bgwidget)
         self.label_2.setGeometry(QtCore.QRect(10, 130, 161, 51))
-        self.label_2.setStyleSheet("color:white;\n" "\n" 'font: 22pt "Arial";\n' "")
+        self.label_2.setStyleSheet(
+            "color:white;\n" "\n" 'font: 22pt "Arial";\n' "")
         self.label_2.setObjectName("label_2")
 
         self.SiteInput = QtWidgets.QLineEdit(self.bgwidget)
@@ -56,7 +58,8 @@ class Ui_Dialog(object):
         )
         self.label_3 = QtWidgets.QLabel(self.bgwidget)
         self.label_3.setGeometry(QtCore.QRect(20, 230, 141, 51))
-        self.label_3.setStyleSheet("color:white;\n" "\n" 'font: 24pt "Arial";\n' "")
+        self.label_3.setStyleSheet(
+            "color:white;\n" "\n" 'font: 24pt "Arial";\n' "")
         self.label_3.setObjectName("label_3")
         self.UploadNiche = QtWidgets.QPushButton(self.bgwidget)
         self.UploadNiche.setGeometry(QtCore.QRect(170, 230, 441, 51))
@@ -71,7 +74,8 @@ class Ui_Dialog(object):
         self.UploadNiche.setObjectName("UploadNiche")
         self.label_4 = QtWidgets.QLabel(self.bgwidget)
         self.label_4.setGeometry(QtCore.QRect(10, 340, 141, 51))
-        self.label_4.setStyleSheet("color:white;\n" "\n" 'font: 24pt "Arial";\n' "")
+        self.label_4.setStyleSheet(
+            "color:white;\n" "\n" 'font: 24pt "Arial";\n' "")
         self.label_4.setObjectName("label_4")
         self.UploadProxies = QtWidgets.QPushButton(self.bgwidget)
         self.UploadProxies.setGeometry(QtCore.QRect(170, 340, 441, 51))
@@ -126,19 +130,23 @@ QPushButton#Stopbtn:hover {
         self.Stopbtn.setObjectName("Stopbtn")
         self.label_5 = QtWidgets.QLabel(self.bgwidget)
         self.label_5.setGeometry(QtCore.QRect(20, 590, 141, 51))
-        self.label_5.setStyleSheet("color:white;\n" "\n" 'font: 18pt "Arial";\n' "")
+        self.label_5.setStyleSheet(
+            "color:white;\n" "\n" 'font: 18pt "Arial";\n' "")
         self.label_5.setObjectName("label_5")
         self.label_6 = QtWidgets.QLabel(self.bgwidget)
         self.label_6.setGeometry(QtCore.QRect(20, 640, 231, 51))
-        self.label_6.setStyleSheet("color:white;\n" "\n" 'font: 18pt "Arial";\n' "")
+        self.label_6.setStyleSheet(
+            "color:white;\n" "\n" 'font: 18pt "Arial";\n' "")
         self.label_6.setObjectName("label_6")
         self.label_8 = QtWidgets.QLabel(self.bgwidget)
         self.label_8.setGeometry(QtCore.QRect(20, 730, 281, 51))
-        self.label_8.setStyleSheet("color:white;\n" "\n" 'font: 18pt "Arial";\n' "")
+        self.label_8.setStyleSheet(
+            "color:white;\n" "\n" 'font: 18pt "Arial";\n' "")
         self.label_8.setObjectName("label_8")
         self.label_7 = QtWidgets.QLabel(self.bgwidget)
         self.label_7.setGeometry(QtCore.QRect(20, 690, 231, 51))
-        self.label_7.setStyleSheet("color:white;\n" "\n" 'font: 18pt "Arial";\n' "")
+        self.label_7.setStyleSheet(
+            "color:white;\n" "\n" 'font: 18pt "Arial";\n' "")
         self.label_7.setObjectName("label_7")
         self.start_time = QtWidgets.QLabel(self.bgwidget)
         self.start_time.setGeometry(QtCore.QRect(150, 590, 201, 41))
@@ -166,7 +174,8 @@ QPushButton#Stopbtn:hover {
         self.total_emails_scrapped.setObjectName("total_emails_scrapped")
         self.label_9 = QtWidgets.QLabel(self.bgwidget)
         self.label_9.setGeometry(QtCore.QRect(130, 530, 231, 51))
-        self.label_9.setStyleSheet("color:white;\n" "\n" 'font: 18pt "Arial";\n' "")
+        self.label_9.setStyleSheet(
+            "color:white;\n" "\n" 'font: 18pt "Arial";\n' "")
         self.label_9.setObjectName("label_9")
 
         self.current_Niche = QtWidgets.QLabel(self.bgwidget)
@@ -177,7 +186,8 @@ QPushButton#Stopbtn:hover {
 
         self.Alert = QtWidgets.QLabel(self.bgwidget)
         self.Alert.setGeometry(QtCore.QRect(240, 490, 301, 51))
-        self.Alert.setStyleSheet("color:red;\n" "\n" 'font: 16pt "Arial";\n' "")
+        self.Alert.setStyleSheet(
+            "color:red;\n" "\n" 'font: 16pt "Arial";\n' "")
         self.Alert.setObjectName("Alert")
 
         self.current_Niche.setObjectName("current_Niche")
@@ -246,7 +256,8 @@ QPushButton#copyBtn:hover {
     def Get_Emails(self):
         Start_RowId = 0
         while not self.STOP or self.bot.Error:
-            con = sqlite3.connect("Emails.db")
+            con = sqlite3.connect(os.path.join(
+                os.path.dirname(os.path.abspath(__file__)), "lightDatabase", "Emails.db"))
             cur = con.cursor()
             cur.execute(
                 """
@@ -351,7 +362,8 @@ QPushButton#copyBtn:hover {
         # and no error was occurred from the bot side
         try:
             while not self.bot.Finished_Scrapping and not self.bot.Error:
-                con = sqlite3.connect("Emails.db")
+                con = sqlite3.connect(os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)), "lightDatabase", "Emails.db"))
                 cur = con.cursor()
                 total_rows = cur.execute(
                     "SELECT rowid from Emails order by ROWID DESC limit 1"
@@ -426,7 +438,8 @@ QPushButton#copyBtn:hover {
                 t = threading.Thread(target=lambda: self.bot.All_Scrapper())
                 t.start()
 
-                t1 = threading.Thread(target=lambda: self.Get_Scrapping_Update())
+                t1 = threading.Thread(
+                    target=lambda: self.Get_Scrapping_Update())
                 t1.start()
 
                 t2 = threading.Thread(target=lambda: self.Get_Emails())
@@ -448,7 +461,7 @@ QPushButton#copyBtn:hover {
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "BOT SCRAPPER "))
-        Dialog.setWindowIcon(QtGui.QIcon("Icon.png"))
+        Dialog.setWindowIcon(QtGui.QIcon("./public/Icon.png"))
         self.label.setText(_translate("Dialog", "DATA TO SEARCH"))
         self.label_2.setText(_translate("Dialog", "WEBSITES"))
         self.label_3.setText(_translate("Dialog", "NICHES"))
@@ -469,14 +482,6 @@ QPushButton#copyBtn:hover {
         self.Alert.setText(_translate("Dialog", ""))
         self.current_Niche.setText(_translate("Dialog", "?"))
         self.copyBtn.setText(_translate("Dialog", "COPY"))
-
-
-#     def newTab(self):
-#         self.window = QtWidgets.QMainWindow()
-#         self.ui = Ui_MainWindow()
-#         self.ui.setupUi(self.window)
-#         self.window.show()
-#         Dialog.close()
 
 
 if __name__ == "__main__":

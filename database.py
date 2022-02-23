@@ -1,6 +1,6 @@
 import sqlite3
 
-con = sqlite3.connect("Emails.db")
+con = sqlite3.connect("./lightDatabase/Emails.db")
 cur = con.cursor()
 
 # cur.execute(

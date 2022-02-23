@@ -1,3 +1,4 @@
+
 import os
 import zipfile
 from time import sleep
@@ -121,7 +122,7 @@ class Bot:
 
         path = os.path.dirname(os.path.abspath(__file__))
         chrome_options = webdriver.ChromeOptions()
-        pluginfile = "proxy_auth_plugin.zip"
+        pluginfile = "./public/proxy_auth_plugin.zip"
 
         self.Setup_Configurations()
 
@@ -131,7 +132,7 @@ class Bot:
         chrome_options.add_extension(pluginfile)
 
         self.Driver = webdriver.Chrome(
-            os.path.join(path, "chromedriver"), chrome_options=chrome_options
+            os.path.join(path, "public", "chromedriver.exe"), chrome_options=chrome_options
         )
 
     # Launch_Browser to be only used after the Driver is setup
@@ -177,11 +178,13 @@ class Bot:
                     try:
                         # TODO:write this in a database instead of a txt file
 
-                        data = self.Driver.find_element(By.XPATH, '//*[@id="rso"]')
+                        data = self.Driver.find_element(
+                            By.XPATH, '//*[@id="rso"]')
 
                         line = str(data.text)
                         matches = re.findall(r"[\w.+-]+@[\w-]+\.[\w.-]+", line)
-                        con = sqlite3.connect("Emails.db")
+                        con = sqlite3.connect(os.path.join(
+                            os.path.dirname(os.path.abspath(__file__)), "lightDatabase", "Emails.db"))
                         cur = con.cursor()
                         for match in matches:
                             if match[-1] == ".":
@@ -281,7 +284,6 @@ class Bot:
 #         'PROXY_PORT': '8000',
 #         'PROXY_USER': 'jHmVb5',
 #         'PROXY_PASS': 'VaDjAG'
-
 #     },
 
 
